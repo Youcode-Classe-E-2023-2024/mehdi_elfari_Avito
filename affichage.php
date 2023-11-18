@@ -26,10 +26,10 @@
             echo "<td>" . $rows['nom'] . "</td>";
             echo "<td>" . $rows['prenom'] . "</td>";
             echo "<td>" . $rows['email'] . "</td>";
-            echo "<td><a href='delete.php?id=" . $id . "'>Supprimer</td>";
+            echo "<td style='display:flex;gap:60px;'><a href='index.php?id=" . $id . "'>Modifier</a><a href='delete.php?id=" . $id . "'>Supprimer</a></td>";
             echo "</tr>";
-            echo "<td><a href='index.php?id=" . $id . "'>Modifier</td>";
-            echo "</tr>";
+            // echo "<td><a href='index.php?id=" . $id . "'>Modifier</td>";
+            // echo "</tr>";
         }
         ?>
     </table>

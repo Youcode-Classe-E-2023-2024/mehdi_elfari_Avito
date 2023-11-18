@@ -19,9 +19,12 @@
         $prenom = $rows['prenom'];
         $email = $rows['email'];
     }
-
     ?>
-    <form method="post" action="page.php">
+
+    <form method="post" action="page.php?<?php if (isset($_GET['id'])) {
+                                                echo "id=update";
+                                            } ?>">
+        <input type="hidden" name="id" value="<?php echo $_GET['id'];  ?>">
         <input style="width: 20%; padding: 0.5rem;" type="text" name="nom" placeholder="Entrer Votre Nom" value="<?php if (isset($_GET['id'])) {
                                                                                                                         echo $nom;
                                                                                                                     } ?>"><br><br>
