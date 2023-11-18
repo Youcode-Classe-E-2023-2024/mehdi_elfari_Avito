@@ -10,39 +10,40 @@
 <body>
     <?php
     include 'connexion.php';
+
+    $nom = $prenom = $email = "";
+
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
-        $sql = "SELECT * from tas where id = '$id'";
-        $q = mysqli_query($con, $sql);
-        $rows = mysqli_fetch_assoc($q);
-        $nom = $rows['nom'];
-        $prenom = $rows['prenom'];
-        $email = $rows['email'];
+        // Using prepared statement to prevent SQL injection
+        $stmt = $con->prepare("SELECT * FROM tas WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $nom = $row['nom'];
+            $prenom = $row['prenom'];
+            $email = $row['email'];
+        } else {
+            // Handle case where ID doesn't exist
+            // You may want to redirect or show an error message
+        }
+        $stmt->close();
     }
     ?>
 
-    <form method="post" action="page.php?<?php if (isset($_GET['id'])) {
-                                                echo "id=update";
-                                            } ?>">
-        <input type="hidden" name="id" value="<?php echo $_GET['id'];  ?>">
-        <input style="width: 20%; padding: 0.5rem;" type="text" name="nom" placeholder="Entrer Votre Nom" value="<?php if (isset($_GET['id'])) {
-                                                                                                                        echo $nom;
-                                                                                                                    } ?>"><br><br>
-        <input style="width: 20%; padding: 0.5rem;" type="text" name="prenom" placeholder="Entrer Votre Prénom" value="<?php if (isset($_GET['id'])) {
-                                                                                                                            echo $prenom;
-                                                                                                                        } ?>"><br><br>
-        <input style="width: 20%; padding: 0.5rem;" type="email" name="email" placeholder="Entrer Votre Email" value="<?php if (isset($_GET['id'])) {
-                                                                                                                            echo $email;
-                                                                                                                        } ?>"><br><br>
+    <form method="post" action="page.php<?php if (isset($_GET['id'])) {
+                                            echo "?id=" . $_GET['id'];
+                                        } ?>">
+        <input type="hidden" name="id" value="<?php echo htmlspecialchars($id ?? '', ENT_QUOTES); ?>">
+        <input style="width: 20%; padding: 0.5rem;" type="text" name="nom" placeholder="Entrer Votre Nom" value="<?php echo htmlspecialchars($nom, ENT_QUOTES); ?>"><br><br>
+        <input style="width: 20%; padding: 0.5rem;" type="text" name="prenom" placeholder="Entrer Votre Prénom" value="<?php echo htmlspecialchars($prenom, ENT_QUOTES); ?>"><br><br>
+        <input style="width: 20%; padding: 0.5rem;" type="email" name="email" placeholder="Entrer Votre Email" value="<?php echo htmlspecialchars($email, ENT_QUOTES); ?>"><br><br>
 
         <button style="padding: 0.5rem; width: 8rem;" type="submit">
-            <?php
-            if (isset($_GET['id'])) {
-                echo "MODIFIER";
-            } else {
-                echo "ENVOYER";
-            }
-            ?>
+            <?php echo isset($_GET['id']) ? "MODIFIER" : "ENVOYER"; ?>
         </button>
     </form>
     <br><br>
